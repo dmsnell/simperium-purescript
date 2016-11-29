@@ -1,10 +1,17 @@
 module SimperiumTypes where
 
 import Prelude
-import Data.Generic (class Generic, gEq, gShow)
+import Data.Argonaut (class EncodeJson, Json, encodeJson, jsonEmptyObject, (~>), (:=))
 import Data.Maybe (Maybe)
+import Data.Monoid (class Monoid)
 
 newtype StreamMessage = StreamMessage String
+
+instance semigroupStreamMessage :: Semigroup StreamMessage where
+    append (StreamMessage a) (StreamMessage b) = StreamMessage $ a <> b
+
+instance monoidStreamMessage :: Monoid StreamMessage where
+    mempty = StreamMessage ""
 
 instance showStreamMessage :: Show StreamMessage where
     show (StreamMessage s) = s
@@ -23,31 +30,11 @@ newtype Channel = Channel Int
 newtype ClientId = ClientId String
 newtype EmailAddress = EmailAddress String
 newtype EntityVersion = EntityVersion Int
-newtype JsonData = JsonData String
 newtype JsonDiff = JsonDiff String
 newtype Key = Key String
 newtype LibraryName = LibraryName String
 newtype LibraryVersion = LibraryVersion String
 newtype UUID = UUID String
-
-derive instance genericAppId :: Generic AppId
-derive instance genericAccessToken :: Generic AccessToken
-derive instance genericApiVersion :: Generic ApiVersion
-derive instance genericBucketName :: Generic BucketName
-derive instance genericBucketVersion :: Generic BucketVersion
-derive instance genericChange :: Generic Change
-derive instance genericChangeId :: Generic ChangeId
-derive instance genericChannel :: Generic Channel
-derive instance genericClientId :: Generic ClientId
-derive instance genericConnectionInfo :: Generic ConnectionInfo
-derive instance genericEmailAddress :: Generic EmailAddress
-derive instance genericEntityVersion :: Generic EntityVersion
-derive instance genericJsonData :: Generic JsonData
-derive instance genericJsonDiff :: Generic JsonDiff
-derive instance genericKey :: Generic Key
-derive instance genericLibraryName :: Generic LibraryName
-derive instance genericLibraryVersion :: Generic LibraryVersion
-derive instance genericUUID :: Generic UUID
 
 data StreamAtom
     = ChannelCommand Channel Command
@@ -62,14 +49,16 @@ instance streamApiStreamAtom :: StreamApi StreamAtom where
     fromStream _ = UnknownAtom
 
     toStream (ChannelCommand (Channel c) command) = 
-        StreamMessage $ (show c) <> ":" <> commandMessage
+        streamMessage <> channelMessage
             where
-                commandMessage = case (toStream command) of (StreamMessage s) -> s
+                streamMessage = StreamMessage $ (show c) <> ":"
+                channelMessage = toStream command
 
     toStream (ChannelMessage (Channel c) message) = 
-        StreamMessage $ (show c) <> ":" <> messageMessage
+        streamMessage <> channelMessage
             where
-                messageMessage = case (toStream message) of (StreamMessage s) -> s
+                streamMessage = StreamMessage $ (show c) <> ":"
+                channelMessage = toStream message
    
     toStream (ReceiveHeartbeat n) = StreamMessage ""
     toStream (SendHeartbeat n) = StreamMessage $ "h:" <> show n
@@ -78,41 +67,27 @@ instance streamApiStreamAtom :: StreamApi StreamAtom where
     toStream StopLogging = StreamMessage "log:0"
     toStream UnknownAtom = StreamMessage ""
 
-derive instance genericStreamAtom :: Generic StreamAtom
-
-instance showStreamAtom :: Show StreamAtom where
-    show = gShow
-
-instance eqStreamAtom :: Eq StreamAtom where
-    eq = gEq
-
 data Command
     = ConnectToBucket ConnectionInfo BucketName Command
     | RequestEntity Key EntityVersion
     | RequestChanges BucketVersion
     | RequestIndex BucketVersion Int
     | SendChange Key EntityVersion ChangeId Change
-    | SendObject Key JsonData
+    | SendObject Key Json
     | NoOp
 
 instance streamApiCommand :: StreamApi Command where
     fromStream _ = NoOp
 
-    toStream (ConnectToBucket ci (BucketName bucket) cmd) =
-        StreamMessage $ "init:{\"name\": " <> show bucket <> "}"
+    toStream (ConnectToBucket connectionInfo (BucketName bucket) _) =
+        StreamMessage $ "init:" <> (show $ encodeJson params)
+            where
+                params = "name" := bucket ~> connectionInfo
 
     toStream (RequestEntity (Key k) (EntityVersion v)) =
         StreamMessage $ "e:" <> k <> "." <> show v
 
-    toStream a = StreamMessage $ "NA " <> show a
-
-derive instance genericCommand :: Generic Command
-
-instance showCommand :: Show Command where
-    show = gShow
-
-instance eqCommand :: Eq Command where
-    eq = gEq
+    toStream _ = StreamMessage $ "NA"
 
 data Message
     = AuthValid EmailAddress
@@ -120,29 +95,19 @@ data Message
     | ChangeFailed Key ChangeError (Array ChangeId)
     | EntityNotFound Key EntityVersion
     | ReceiveChanges (Array ChangeSet)
-    | ReceiveEntity Key EntityVersion JsonData
+    | ReceiveEntity Key EntityVersion Json
     | ReceiveIndex BucketVersion (Array KeyVersionPair) (Maybe BucketVersion)
     | VersionNotFound BucketVersion
     | UnknownMessage
 
-derive instance genericMessage :: Generic Message
-
-instance showMessage :: Show Message where
-    show = gShow
-
-instance eqMessage :: Eq Message where
-    eq = gEq
-
 instance streamApiMessage :: StreamApi Message where
     fromStream _ = UnknownMessage
-    toStream a = StreamMessage $ "NA " <> show a
+    toStream a = StreamMessage $ "NA"
 
 data AuthError
     = TokenFormatInvalid
     | TokenInvalid
     | UnspecifiedError
-
-derive instance genericAuthError :: Generic AuthError
 
 data ChangeError
     = DocumentTooLarge
@@ -155,11 +120,7 @@ data ChangeError
     | InvalidPermissions
     | InvalidVersion
 
-derive instance genericChangeError :: Generic ChangeError
-
 data ChangeSet = ChangeSet ClientId BucketVersion Key EntityVersion EntityVersion Change (Array ChangeId)
-
-derive instance genericChangeSet :: Generic ChangeSet
 
 data Change
     = EntityDiff JsonDiff
@@ -167,14 +128,20 @@ data Change
 
 data ConnectionInfo = ConnectionInfo AppId AccessToken ApiVersion ClientId LibraryName LibraryVersion
 
-data Entity = Entity Key EntityVersion JsonData
+instance encodeJson :: EncodeJson ConnectionInfo where
+    encodeJson (ConnectionInfo (AppId a) (AccessToken t) (ApiVersion v) (ClientId c) (LibraryName ln) (LibraryVersion lv))
+        = "app_id" := a
+       ~> "token" := t
+       ~> "api" := v
+       ~> "client_id" := c
+       ~> "library" := ln
+       ~> "version" := lv
+       ~> jsonEmptyObject
+
+data Entity = Entity Key EntityVersion Json
 
 data KeyVersionPair = KeyVersionPair Key EntityVersion
-
-derive instance genericKeyVersionPair :: Generic KeyVersionPair
 
 data LoggingLevel
     = Normal
     | Verbose
-
-derive instance genericLoggingLevel :: Generic LoggingLevel
