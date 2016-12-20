@@ -23,7 +23,7 @@ connection =
         (LibraryVersion "0.1.0")
 
 handleMessage :: Message -> Command
-handleMessage m = NoOp
+handleMessage _ = NoOp
 
 dispatchLoop :: Unit
 dispatchLoop = do

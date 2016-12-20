@@ -5,21 +5,6 @@ import Data.Argonaut (class EncodeJson, Json, encodeJson, jsonEmptyObject, (~>),
 import Data.Maybe (Maybe)
 import Data.Monoid (class Monoid)
 
-newtype StreamMessage = StreamMessage String
-
-instance semigroupStreamMessage :: Semigroup StreamMessage where
-    append (StreamMessage a) (StreamMessage b) = StreamMessage $ a <> b
-
-instance monoidStreamMessage :: Monoid StreamMessage where
-    mempty = StreamMessage ""
-
-instance showStreamMessage :: Show StreamMessage where
-    show (StreamMessage s) = s
-
-class StreamApi a where
-    fromStream :: StreamMessage -> a
-    toStream :: a -> StreamMessage
-
 newtype AppId = AppId String
 newtype AccessToken = AccessToken String
 newtype ApiVersion = ApiVersion String
@@ -35,15 +20,6 @@ newtype Key = Key String
 newtype LibraryName = LibraryName String
 newtype LibraryVersion = LibraryVersion String
 newtype UUID = UUID String
-
-data StreamAtom
-    = ChannelCommand Channel Command
-    | ChannelMessage Channel Message
-    | ReceiveHeartbeat Int
-    | SendHeartbeat Int
-    | StartLogging LoggingLevel
-    | StopLogging
-    | UnknownAtom
 
 instance streamApiStreamAtom :: StreamApi StreamAtom where
     fromStream _ = UnknownAtom
@@ -141,7 +117,3 @@ instance encodeJson :: EncodeJson ConnectionInfo where
 data Entity = Entity Key EntityVersion Json
 
 data KeyVersionPair = KeyVersionPair Key EntityVersion
-
-data LoggingLevel
-    = Normal
-    | Verbose
