@@ -99,8 +99,10 @@ data ChangeError
 data ChangeSet = ChangeSet ClientId BucketVersion Key EntityVersion EntityVersion Change (Array ChangeId)
 
 data Change
-    = EntityDiff JsonDiff
-    | EntityRemoval
+    = ModifyEntity JsonDiff
+    | RemoveEntity
+    | EmptyBucket
+    | DropBucket
 
 data ConnectionInfo = ConnectionInfo AppId AccessToken ApiVersion ClientId LibraryName LibraryVersion
 
