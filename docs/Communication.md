@@ -31,7 +31,7 @@ are queued up to be dispatched back to the Simperium server in reponse.
 Although it would be tempting to continue this conversation though the
 message we expect to receive from the server in hypothetical step four
 we will restrain ourselves from doing this.
-It's important to remember how asynchronous and decouples the Simperium
+It's important to remember how asynchronously and decoupled the Simperium
 model permits us to think; the response from the server actually starts
 a new conversation triggered by a `ReceiveEntity` message.
 
