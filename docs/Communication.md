@@ -34,6 +34,8 @@ we will restrain ourselves from doing this.
 It's important to remember how asynchronously and decoupled the Simperium
 model permits us to think; the response from the server actually starts
 a new conversation triggered by a `ReceiveEntity` message.
+The result of this is that conversations are short and simple to reason
+about because the amount of state-tracking has been minimized.
 
 ## Events
 
