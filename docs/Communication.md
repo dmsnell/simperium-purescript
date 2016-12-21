@@ -47,7 +47,7 @@ Events are the atoms of change and data transport.
 |------------|--------|--------|---------|----------|
 | Announcement | library | app | Announces updated data for an entity in use by the host application | |
 | Command | library | server | Requests some action or change on the server | Message |
-| Message | server | library | Responds to some command or announces remote changes | Command |
+| Message | server | library | Responds to some command or announces remote changes | Announcement \| Command |
 | Response | library | app | Responds to some data request made by the app | |
-| Request | app | library | Requests indices or entities from Simperium | Response |
-| Update | app | library | Requests changes to entities or buckets in Simperium | Response |
+| Request | app | library | Requests indices or entities from Simperium | Command \| Response |
+| Update | app | library | Requests changes to entities or buckets in Simperium | Command \| Response |
