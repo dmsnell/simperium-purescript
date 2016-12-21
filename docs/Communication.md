@@ -41,11 +41,11 @@ Events are the atoms of change and data transport.
 
 ### Event types summary
 
-| Event type | Source | Target | Meaning |
-|------------|--------|--------|---------|
-| Announcement | library | app | Announces updated data for an entity in use by the host application |
-| Command | library | server | Requests some action or change on the server |
-| Message | server | library | Responds to some command or announces remote changes |
-| Responses | library | app | Responds to some data request made by the app |
-| Request | app | library | Requests indices or entities from Simperium |
-| Update | app | library | Requests changes to entities or buckets in Simperium |
+| Event type | Source | Target | Meaning | Triggers |
+|------------|--------|--------|---------|----------|
+| Announcement | library | app | Announces updated data for an entity in use by the host application | |
+| Command | library | server | Requests some action or change on the server | Message |
+| Message | server | library | Responds to some command or announces remote changes | Command |
+| Response | library | app | Responds to some data request made by the app | |
+| Request | app | library | Requests indices or entities from Simperium | Response |
+| Update | app | library | Requests changes to entities or buckets in Simperium | Response |
