@@ -1,10 +1,10 @@
 module StreamApi.StreamAtom where
 
-import SimperiumTypes (Channel, Command, Message)
+import SimperiumTypes (Channel, AppMessage, ServerMessage)
 
 data StreamAtom
-    = ChannelCommand Channel Command
-    | ChannelMessage Channel Message
+    = ChannelCommand Channel AppMessage
+    | ChannelMessage Channel ServerMessage
     | ReceiveHeartbeat Int
     | SendHeartbeat Int
     | StartLogging LoggingLevel
@@ -13,7 +13,3 @@ data StreamAtom
 data LoggingLevel
     = NormalLogging
     | VerboseLogging
-
-newtype StreamState = StreamState {
-    channels : 
-}

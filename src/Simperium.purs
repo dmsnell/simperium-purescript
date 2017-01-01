@@ -1,9 +1,8 @@
 module Simperium where
 
 import Control.Monad.Aff (Aff, forkAff)
-import Control.Monad.Aff.AVar (AVAR, AVar, makeVar, peekVar, putVar, takeVar)
-import Control.Monad.Eff.Class (liftEff)
-import Control.Monad.Eff.Console (CONSOLE, logShow)
+import Control.Monad.Aff.AVar (AVAR, AVar, makeVar, takeVar)
+import Control.Monad.Eff.Console (CONSOLE)
 import Prelude
 
 main :: forall e. Aff (avar :: AVAR, console :: CONSOLE | e) Unit

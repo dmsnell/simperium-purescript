@@ -43,14 +43,13 @@ instance streamApiStreamAtom :: StreamApi StreamAtom where
     toStream StopLogging = StreamMessage "log:0"
     toStream UnknownAtom = StreamMessage ""
 
-data Command
+data AppMessage
     = ConnectToBucket ConnectionInfo BucketName Command
     | RequestEntity Key EntityVersion
     | RequestChanges BucketVersion
     | RequestIndex BucketVersion Int
     | SendChange Key EntityVersion ChangeId Change
-    | SendObject Key Json
-    | NoOp
+    | SendEntity Key EntityVersion Json
 
 instance streamApiCommand :: StreamApi Command where
     fromStream _ = NoOp
@@ -65,7 +64,7 @@ instance streamApiCommand :: StreamApi Command where
 
     toStream _ = StreamMessage $ "NA"
 
-data Message
+data ServerMessage
     = AuthValid EmailAddress
     | AuthInvalid AuthError String
     | ChangeFailed Key ChangeError (Array ChangeId)
@@ -78,7 +77,7 @@ data Message
 
 instance streamApiMessage :: StreamApi Message where
     fromStream _ = UnknownMessage
-    toStream a = StreamMessage $ "NA"
+    toStream a = StreamMessage "NA"
 
 data AuthError
     = TokenFormatInvalid
