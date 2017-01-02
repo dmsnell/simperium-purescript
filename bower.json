@@ -12,7 +12,10 @@
     "purescript-aff": "^2.0.2",
     "purescript-strings": "^2.0.2",
     "purescript-spec": "^0.10.0",
-    "purescript-tailrec": "^2.0.1"
+    "purescript-tailrec": "^2.0.1",
+    "purescript-argonaut-core": "^2.0.1",
+    "purescript-tuples": "^3.1.0",
+    "purescript-argonaut": "^2.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^2.0.0"
