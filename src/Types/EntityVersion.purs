@@ -4,13 +4,13 @@ module Types.EntityVersion
   , isValidEntityVersion
   ) where
 
-import Prelude (class Eq, class Ord, class Show, compare, map, show, (==), (<<<))
-import Data.Maybe (Maybe, isJust)
+import Prelude (class Eq, class Ord, class Show, compare, map, show, (==), (>=), (<<<))
+import Data.Maybe (Maybe(Just, Nothing), isJust)
 
 newtype EntityVersion = EntityVersion Int
 
 entityVersion :: Int -> Maybe EntityVersion
-entityVersion n = (map EntityVersion) <<< maybeVersion
+entityVersion n = map EntityVersion maybeVersion
   where
     maybeVersion = if n >= 0 then Just n else Nothing
 

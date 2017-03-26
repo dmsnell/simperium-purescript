@@ -3,12 +3,13 @@ module StreamApi.Tests (testStreamApi) where
 import Control.Monad.Aff (Aff)
 import Data.Array (replicate)
 import Data.String (fromCharArray)
-import Prelude (Unit, bind, ($))
+import Prelude (Unit, bind, negate, ($))
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
 
 import Types.AppId (isValidAppId)
 import Types.BucketName (isValidBucketName)
+import Types.EntityVersion (isValidEntityVersion)
 import Types.Key (isValidKey)
 
 tester :: forall a e. (a -> Boolean) -> Boolean -> a -> Aff (e) Unit
@@ -19,6 +20,7 @@ testStreamApi =
     describe "Base Types" do
         testAppId
         testBucketName
+        testEntityVersion
         testKey
 
 testAppId :: forall r. Spec r Unit
@@ -55,6 +57,16 @@ testBucketName =
             pass "test"
             pass "abc123"
             pass "_.-"
+
+testEntityVersion :: forall r. Spec r Unit
+testEntityVersion =
+  describe "EntityVersion" do
+    it "should reject negative version numbers" do
+      (isValidEntityVersion (-1)) `shouldEqual` false
+
+    it "should allow non-negative version numbers" do
+      (isValidEntityVersion 0) `shouldEqual` true
+      (isValidEntityVersion 1) `shouldEqual` true
 
 testKey :: forall r. Spec r Unit
 testKey =
