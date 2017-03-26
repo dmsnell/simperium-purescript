@@ -1,15 +1,17 @@
 module StreamApi.Tests (testStreamApi) where
 
-import Prelude (Unit, bind, show, ($))
+import Control.Monad.Aff (Aff)
 import Data.Array (replicate)
-import Data.Functor (map)
-import Data.Maybe (Maybe(Just, Nothing))
 import Data.String (fromCharArray)
+import Prelude (Unit, bind, ($))
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
 
-import StreamApi.BaseTypes
+import Types.AppId (isValidAppId)
 import Types.BucketName (isValidBucketName)
+
+tester :: forall a e. (a -> Boolean) -> Boolean -> a -> Aff (e) Unit
+tester predicate result thing = predicate thing `shouldEqual` result
 
 testStreamApi :: forall r. Spec r Unit
 testStreamApi = 
@@ -21,25 +23,34 @@ testAppId :: forall r. Spec r Unit
 testAppId = 
     describe "AppId" do
         it "should reject invalid names" do
-            appId "#" `shouldEqual` Nothing
-            appId "$" `shouldEqual` Nothing
-            appId "" `shouldEqual` Nothing
-            appId (fromCharArray $ replicate 300 'a') `shouldEqual` Nothing
+            let fail = tester isValidAppId false
+
+            fail "#"
+            fail "$"
+            fail ""
+            fail $ fromCharArray $ replicate 300 'a'
 
         it "should allow valid names" do
-            (show $ appId "test") `shouldEqual` (show (Just "test"))
-            (show $ appId "abc123") `shouldEqual` (show (Just "abc123"))
-            (show $ appId "_.-") `shouldEqual` (show (Just "_.-"))
+            let pass = tester isValidAppId true
+
+            pass "test"
+            pass "abc123"
+            pass "_.-"
 
 testBucketName :: forall r. Spec r Unit
 testBucketName =
     describe "BucketName" do
         it "should reject invalid names" do
-            isValidBucketName "#" `shouldEqual` false
-            isValidBucketName "" `shouldEqual` false
-            isValidBucketName (fromCharArray $ replicate 65 'a') `shouldEqual` false
+            let fail = tester isValidBucketName false
+            
+            fail "#"
+            fail ""
+            fail $ fromCharArray $ replicate 65 'a'
         
         it "should allow valid names" do
-            isValidBucketName "test" `shouldEqual` true
-            isValidBucketName "abc123" `shouldEqual` true
-            isValidBucketName "_.-%" `shouldEqual` true
+            let pass = tester isValidBucketName true
+
+            pass "test"
+            pass "abc123"
+            pass "_.-"
+
