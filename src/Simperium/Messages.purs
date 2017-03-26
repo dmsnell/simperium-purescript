@@ -57,7 +57,15 @@ data ChangeError
     | InvalidPermissions
     | InvalidVersion
 
-data ChangeSet = ChangeSet ClientId BucketVersion Key EntityVersion EntityVersion Change (Array ChangeId)
+data ChangeSet = 
+    ChangeSet 
+        ClientId 
+        BucketVersion -- new bucket version after change
+        Key 
+        EntityVersion -- start version of change
+        EntityVersion -- end versio of change
+        Change
+        (Array ChangeId)
 
 data Change
     = ModifyEntity JsonDiff

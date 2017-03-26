@@ -15,7 +15,8 @@
     "purescript-tailrec": "^2.0.1",
     "purescript-argonaut-core": "^2.0.1",
     "purescript-tuples": "^3.1.0",
-    "purescript-argonaut": "^2.0.0"
+    "purescript-argonaut": "^2.0.0",
+    "purescript-datetime": "^2.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^2.0.0"

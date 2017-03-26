@@ -1,7 +1,8 @@
 module StreamApi.Tests (testStreamApi) where
 
-import Prelude (Unit, bind, ($))
+import Prelude (Unit, bind, show, ($))
 import Data.Array (replicate)
+import Data.Functor (map)
 import Data.Maybe (Maybe(Just, Nothing))
 import Data.String (fromCharArray)
 import Test.Spec (Spec, describe, it)
@@ -25,19 +26,19 @@ testAppId =
             appId (fromCharArray $ replicate 300 'a') `shouldEqual` Nothing
 
         it "should allow valid names" do
-            appId "test" `shouldEqual` Just (AppId "test")
-            appId "abc123" `shouldEqual` Just (AppId "abc123")
-            appId "_.-" `shouldEqual` Just (AppId "_.-")
+            (show $ appId "test") `shouldEqual` (show (Just "test"))
+            (show $ appId "abc123") `shouldEqual` (show (Just "abc123"))
+            (show $ appId "_.-") `shouldEqual` (show (Just "_.-"))
 
 testBucketName :: forall r. Spec r Unit
 testBucketName =
     describe "BucketName" do
         it "should reject invalid names" do
-            bucketName "#" `shouldEqual` Nothing
-            bucketName "" `shouldEqual` Nothing
-            bucketName (fromCharArray $ replicate 65 'a') `shouldEqual` Nothing
+            isValidBucketName "#" `shouldEqual` false
+            isValidBucketName "" `shouldEqual` false
+            isValidBucketName (fromCharArray $ replicate 65 'a') `shouldEqual` false
         
         it "should allow valid names" do
-            bucketName "test" `shouldEqual` Just (BucketName "test")
-            bucketName "abc123" `shouldEqual` Just (BucketName "abc123")
-            bucketName "_.-%" `shouldEqual` Just (BucketName "_.-%")
+            isValidBucketName "test" `shouldEqual` true
+            isValidBucketName "abc123" `shouldEqual` true
+            isValidBucketName "_.-%" `shouldEqual` true

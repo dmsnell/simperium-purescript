@@ -3,6 +3,7 @@ module Simperium where
 import Control.Monad.Aff (Aff, forkAff)
 import Control.Monad.Aff.AVar (AVAR, AVar, makeVar, takeVar)
 import Control.Monad.Eff.Console (CONSOLE)
+import Control.Monad.Rec.Class (forever)
 import Prelude
 
 main :: forall e. Aff (avar :: AVAR, console :: CONSOLE | e) Unit
@@ -25,35 +26,27 @@ main = do
     pure unit
 
 connectWebSocket :: forall a e. AVar a -> AVar a -> Aff (avar :: AVAR | e) Unit
-connectWebSocket fromServer toServer = do
+connectWebSocket fromServer toServer = forever $ do
     {-
     ws = new websocket
     ws.on = (\message -> putVar fromServer message)
     -}
-    let
-       loop = do 
-           command <- takeVar toServer
-           {-
-           ws.send command
-           -}
-           loop
-
+    command <- takeVar toServer
+    {-
+    ws.send command
+    -}
     pure unit
 
 connectWebWorker :: forall a e. AVar a -> AVar a -> Aff (avar :: AVAR | e) Unit
-connectWebWorker fromApp toApp = do
+connectWebWorker fromApp toApp = forever $ do
     {-
     worker = new worker( parent )
     worker.on = (\message -> putVar fromApp message)
     -}
-    let
-        loop = do
-            event <- takeVar toApp
-            {-
-            worker.send event
-            -}
-            loop
-
+    event <- takeVar toApp
+    {-
+    worker.send event
+    -}
     pure unit
 
 processMessages :: forall a e. AVar a -> AVar a -> AVar a -> Aff (avar :: AVAR | e) Unit
