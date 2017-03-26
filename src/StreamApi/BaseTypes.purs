@@ -9,14 +9,9 @@ module StreamApi.BaseTypes
     ) where
 
 import Prelude
-import Data.Maybe (Maybe, isJust)
-
-import Types.RegexValidator (validateString)
 
 newtype AccessToken = AccesToken String
 newtype ApiVersion = ApiVersion String
-newtype AppId = AppId String
-newtype BucketName = BucketName String
 newtype ClientId = ClientId String
 newtype LibraryName = LibraryName String
 newtype LibraryVersion = LibraryVersion String
