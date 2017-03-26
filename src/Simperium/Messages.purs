@@ -57,11 +57,11 @@ data ChangeError
     | InvalidPermissions
     | InvalidVersion
 
-data ChangeSet = 
-    ChangeSet 
-        ClientId 
+data ChangeSet =
+    ChangeSet
+        ClientId
         BucketVersion -- new bucket version after change
-        Key 
+        Key
         EntityVersion -- start version of change
         EntityVersion -- end versio of change
         Change

@@ -9,6 +9,7 @@ import Test.Spec.Assertions (shouldEqual)
 
 import Types.AppId (isValidAppId)
 import Types.BucketName (isValidBucketName)
+import Types.Key (isValidKey)
 
 tester :: forall a e. (a -> Boolean) -> Boolean -> a -> Aff (e) Unit
 tester predicate result thing = predicate thing `shouldEqual` result
@@ -18,6 +19,7 @@ testStreamApi =
     describe "Base Types" do
         testAppId
         testBucketName
+        testKey
 
 testAppId :: forall r. Spec r Unit
 testAppId =
@@ -28,7 +30,7 @@ testAppId =
             fail "#"
             fail "$"
             fail ""
-            fail $ fromCharArray $ replicate 300 'a'
+            fail $ fromCharArray $ replicate 257 'a'
 
         it "should allow valid names" do
             let pass = tester isValidAppId true
@@ -53,3 +55,24 @@ testBucketName =
             pass "test"
             pass "abc123"
             pass "_.-"
+
+testKey :: forall r. Spec r Unit
+testKey =
+  describe "Key" do
+    it "should reject invalid keys" do
+      let fail = tester isValidKey false
+
+      fail "#"
+      fail ""
+      fail " "
+      fail "\t"
+      fail $ fromCharArray $ replicate 257 'a'
+
+    it "should allow valid keys" do
+      let pass = tester isValidKey true
+
+      pass "."
+      pass "@"
+      pass "_.-"
+      pass "abc123"
+      pass $ fromCharArray $ replicate 256 'a'
