@@ -6,20 +6,22 @@ import Data.Argonaut.Core (Json)
 import Data.Maybe (Maybe)
 import Data.Monoid (class Monoid)
 
-newtype AppId = AppId String
-newtype AccessToken = AccessToken String
-newtype ApiVersion = ApiVersion String
-newtype BucketName = BucketName String
+import Types.AppId (AppId)
+import Types.AccessToken (AccessToken)
+import Types.ApiVersion (ApiVersion)
+import Types.BucketName (BucketName)
+import Types.ClientId (ClientId)
+import Types.EntityVersion (EntityVersion)
+import Types.Key (Key)
+import Types.KeyVersionPair (KeyVersionPair)
+import Types.LibraryName (LibraryName)
+import Types.LibraryVersion (LibraryVersion)
+
 newtype BucketVersion = Version String
 newtype ChangeId = ChangeId UUID
 newtype Channel = Channel Int
-newtype ClientId = ClientId String
 newtype EmailAddress = EmailAddress String
-newtype EntityVersion = EntityVersion Int
 newtype JsonDiff = JsonDiff String
-newtype Key = Key String
-newtype LibraryName = LibraryName String
-newtype LibraryVersion = LibraryVersion String
 newtype UUID = UUID String
 
 data AppMessage
@@ -74,7 +76,3 @@ data Change
     | DropBucket
 
 data ConnectionInfo = ConnectionInfo AppId AccessToken ApiVersion ClientId LibraryName LibraryVersion
-
-data Entity = Entity Key EntityVersion Json
-
-data KeyVersionPair = KeyVersionPair Key EntityVersion

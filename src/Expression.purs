@@ -3,7 +3,10 @@ module Expression where
 import Data.Argonaut.Core (Json)
 import Data.DateTime (DateTime)
 
-import Simperium.Messages (Entity, EntityVersion, JsonDiff, Key)
+import Types.Entity (Entity)
+import Types.EntityVersion (EntityVersion)
+import Types.Key (Key)
+import Simperium.Messages (JsonDiff)
 
 data Expression
     = NoOp
@@ -12,6 +15,6 @@ data Expression
     | GetLocalEntities Key
     | StoreEntity Entity
     | QueueChange Key EntityVersion Json DateTime
-    | RebaseDiff Json JsonDiff JsonDiff 
+    | RebaseDiff Json JsonDiff JsonDiff
     | RemoveEntity Key
     | RemoveLocalEntity Key
