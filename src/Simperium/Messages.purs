@@ -11,6 +11,7 @@ import Types.AccessToken (AccessToken)
 import Types.ApiVersion (ApiVersion)
 import Types.BucketName (BucketName)
 import Types.ClientId (ClientId)
+import Types.ConnectionInfo (ConnectionInfo)
 import Types.EntityVersion (EntityVersion)
 import Types.Key (Key)
 import Types.KeyVersionPair (KeyVersionPair)
@@ -74,5 +75,3 @@ data Change
     | RemoveEntity
     | EmptyBucket
     | DropBucket
-
-data ConnectionInfo = ConnectionInfo AppId AccessToken ApiVersion ClientId LibraryName LibraryVersion
