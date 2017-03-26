@@ -2,13 +2,10 @@ module StreamApi.BaseTypes
     ( AccessToken
     , ApiVersion
     , AppId
-    , BucketName
     , ClientId
     , LibraryName
     , LibraryVersion
     , appId
-    , bucketName
-    , isValidBucketName
     , thisApiVersion
     , thisClientId
     ) where
@@ -34,18 +31,6 @@ instance appIdEq :: Eq AppId where
 
 instance appIdShow :: Show AppId where
     show (AppId a) = show a
-
-bucketName :: String -> Maybe BucketName
-bucketName s = map BucketName (validateString "^[a-zA-Z0-9._%-]{1,64}$" s)
-
-isValidBucketName :: String -> Boolean
-isValidBucketName = isJust <<< bucketName
-
-instance bucketNameEq :: Eq BucketName where
-    eq (BucketName a) (BucketName b) = eq a b
-
-instance bucketNameShow :: Show BucketName where
-    show (BucketName a) = show a
 
 instance apiVersionEq :: Eq ApiVersion where
     eq (ApiVersion a) (ApiVersion b) = a == b

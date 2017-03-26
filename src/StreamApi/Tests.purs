@@ -9,6 +9,7 @@ import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
 
 import StreamApi.BaseTypes
+import Types.BucketName (isValidBucketName)
 
 testStreamApi :: forall r. Spec r Unit
 testStreamApi = 
