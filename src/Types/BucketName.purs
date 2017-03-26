@@ -9,16 +9,16 @@ import Data.Maybe (Maybe, isJust)
 
 import Types.RegexValidator (validateString)
 
-data BucketName = BucketName String
+newtype BucketName = BucketName String
 
 bucketName :: String -> Maybe BucketName
-bucketName s = map BucketName (validateString "^[a-zA-Z0-9._%-]{1,64}$" s)
+bucketName = (map BucketName) <<< (validateString "^[a-zA-Z0-9._%-]{1,64}$")
 
 isValidBucketName :: String -> Boolean
 isValidBucketName = isJust <<< bucketName
 
-instance bucketNameEq :: Eq BucketName where
+instance eqBucketName :: Eq BucketName where
     eq (BucketName a) (BucketName b) = eq a b
 
-instance bucketNameShow :: Show BucketName where
+instance showBucketName :: Show BucketName where
     show (BucketName a) = show a
